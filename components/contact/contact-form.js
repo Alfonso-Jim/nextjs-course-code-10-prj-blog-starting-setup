@@ -2,6 +2,20 @@ import { useEffect, useState } from 'react';
 import classes from './contact-form.module.css';
 import Notification from '../ui/notification';
 
+const sendContactData = async (contactDetails) => {
+  const response = await fetch('/api/contact', {
+    method: 'POST',
+    body: JSON.stringify(contactDetails),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.message || 'Something went wrong!');
+  }
+};
+
 const ContactForm = () => {
   const [enteredEmail, setEnteredEmail] = useState('');
   const [enteredName, setEnteredName] = useState('');
@@ -19,24 +33,6 @@ const ContactForm = () => {
     }
   }, [requestStatus]);
 
-  const sendContactData = async (contactDetails) => {
-    const response = await fetch('/api/contact', {
-      method: 'POST',
-      body: JSON.stringify(contactDetails),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.message || 'Something went wrong!');
-    }
-    setRequestStatus('success');
-    setEnteredEmail('');
-    setEnteredName('');
-    setEnteredMessage('');
-  };
-
   const sendMessageHandler = async (event) => {
     event.preventDefault();
     setRequestStatus('pending');
@@ -46,6 +42,10 @@ const ContactForm = () => {
         name: enteredName,
         message: enteredMessage,
       });
+      setRequestStatus('success');
+      setEnteredMessage('');
+      setEnteredEmail('');
+      setEnteredName('');
     } catch (error) {
       setRequestError(error.message || 'Something went wrong!');
       setRequestStatus('error');
