@@ -18,10 +18,10 @@ const handler = async (req, res) => {
 
     let client;
 
+    const connectionString = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_CLUSTERNAME}.7ztaz.mongodb.net/blog?retryWrites=true&w=majority&appName=${process.env.MONGODB_APPNAME}`;
+
     try {
-      client = await MongoClient.connect(
-        `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@cluster0.7ztaz.mongodb.net/blog?retryWrites=true&w=majority&appName=Cluster0`
-      );
+      client = await MongoClient.connect(connectionString);
     } catch (error) {
       res.status(500).json({ message: error.message });
       return;
